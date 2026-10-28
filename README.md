@@ -46,5 +46,5 @@ Below is the evaluation metrics matrix computed over the isolated, stratified 20
 | **Support Vector Machine** | Best at capturing high-risk patients. It handles complex symptoms very smoothly. It scored the highest in catching actual heart disease cases (highest Recall). |
 
 #### 3. Overall Dataset Winner Verdict
-**Logistic Regression** is selected as the clear winning model framework for this heart disease dataset configuration. It achieves the highest overall optimization performance indicators across all primary tracking parameters, maximizing **Accuracy (0.858696)**, **AUC Score (0.927068)**, and **MCC Score (0.713524)**.
+**Logistic Regression** is selected as the clear winning model framework for this heart disease dataset configuration. It achieves the highest overall performance indicators across all primary tracking parameters, maximizing **Accuracy (0.858696)**, **AUC Score (0.927068)**, and **MCC Score (0.713524)**.
 
