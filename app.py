@@ -138,7 +138,7 @@ if uploaded_file is not None:
             st.stop()
             
         # Run data transforms 
-        test_data = run_feature_engineering(test_data)
+        #test_data = run_feature_engineering(test_data)
         
         X_eval = test_data.drop(columns=['target'])
         y_eval = test_data['target']
