@@ -1,5 +1,5 @@
-# ml-disease-detection
-ML models for Heart Disease classification
+
+## ML models for Heart Disease classification
 
 
 ### a. Problem Statement
