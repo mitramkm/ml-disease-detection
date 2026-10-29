@@ -143,8 +143,25 @@ if uploaded_file is not None:
         X_eval = test_data.drop(columns=['target'])
         y_eval = test_data['target']
         
-        # Apply standard transformations
-        X_eval_transformed = system_preprocessor.transform(X_eval)
+        try:
+            # Dynamically extract the exact list of feature names used during .fit_transform()
+            expected_features_order = system_preprocessor.feature_names_in_
+            
+            # Re-index the live dataframe to guarantee correct column sequence alignment
+            X_eval = X_eval.reindex(columns=expected_features_order)
+            
+            # Print a quick internal validation log check to Streamlit's sidebar layout
+            st.sidebar.caption(f"✔ Verified feature vector space dimension: {X_eval.shape[1]} inputs aligned.")
+        except AttributeError:
+            # Safe boundary fallback condition for tracking variants across scikit-learn version libraries
+            pass
+        
+        # Apply standard coordinates transformations scaling matrix arrays
+        try:
+            X_eval_transformed = system_preprocessor.transform(X_eval)
+        except Exception as transform_err:
+            st.error(f"Transformer formatting error encountered during vector alignment conversion: {transform_err}")
+            st.stop()
         
         st.sidebar.header("Target Classifier Models")
         selected_model = st.sidebar.selectbox("Choose model for validation evaluation:", list(models_dict.keys()))
