@@ -71,7 +71,7 @@ uploaded_file = st.sidebar.file_uploader("Upload the 'test_data.csv' file", type
 if uploaded_file is None:
     test_data = pd.read_csv('test_data.csv')
     st.success("Test dataset loaded successfully.")
-else
+else:
     test_data = pd.read_csv(uploaded_file)
     st.success("Test dataset loaded successfully.")
 
