@@ -84,7 +84,7 @@ if uploaded_file is not None:
 
         # Drop unnecessary columns
         for cols_to_drop in ['id', 'num']:
-            if administrative_col in X_eval.columns:
+            if cols_to_drop in X_eval.columns:
                 X_eval = X_eval.drop(columns=[cols_to_drop])
 
         # Selection dropdown
