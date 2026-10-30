@@ -94,8 +94,8 @@ if uploaded_file is not None:
         active_clf = models_dict[selected_model]
         
         # Predict classes and output
-        predictions = active_clf.predict(X_eval_transformed)
-        probabilities = active_clf.predict_proba(X_eval_transformed)[:, 1] if hasattr(active_clf, "predict_proba") else predictions
+        predictions = active_clf.predict(X_eval)
+        probabilities = active_clf.predict_proba(X_eval)[:, 1] if hasattr(active_clf, "predict_proba") else predictions
         
         # Render metrics
         render_dashboard_metrics(y_eval, predictions, probabilities, selected_model)
