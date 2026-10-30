@@ -23,7 +23,10 @@ def load_system_artifacts():
     for name, path in model_paths.items():
         loaded_models[name] = joblib.load(path)
         
-    return loaded_models
+    # Load the preprocessor pipeline artifact
+    preprocessor = joblib.load('model/preprocessor.joblib')
+    
+    return loaded_models, preprocessor
 
 
 
@@ -73,8 +76,8 @@ if uploaded_file is not None:
         st.error("Corrupt file. Missing target format")
     else:
         try:
-            # Load models
-            models_dict = load_system_artifacts()
+            # Load models & transformer
+            models_dict, system_preprocessor = load_system_artifacts()
         except Exception as err:
             st.error(f"Failed to load model files: {err}")
             st.stop()
@@ -92,10 +95,17 @@ if uploaded_file is not None:
         selected_model = st.sidebar.selectbox("Choose model for validation evaluation:", list(models_dict.keys()))
         
         active_clf = models_dict[selected_model]
+
+        # Load the transformer
+        try:
+            X_eval_transformed = system_preprocessor.transform(X_eval)
+        except Exception as trans_err:
+            st.error(f"Data alignment error for the preprocessor: {trans_err}")
+            st.stop()
         
         # Predict classes and output
-        predictions = active_clf.predict(X_eval)
-        probabilities = active_clf.predict_proba(X_eval)[:, 1] if hasattr(active_clf, "predict_proba") else predictions
+        predictions = active_clf.predict(X_eval_transformed)
+        probabilities = active_clf.predict_proba(X_eval_transformed)[:, 1] if hasattr(active_clf, "predict_proba") else predictions
         
         # Render metrics
         render_dashboard_metrics(y_eval, predictions, probabilities, selected_model)
