@@ -68,50 +68,52 @@ st.title("Interactive Heart Disease Prediction")
 st.sidebar.header("Upload Verification Data")
 uploaded_file = st.sidebar.file_uploader("Upload the 'test_data.csv' file", type=["csv"])
 
-if uploaded_file is not None:
+if uploaded_file is None:
+    test_data = pd.read_csv('test_data.csv')
+    st.success("Test dataset loaded successfully.")
+else
     test_data = pd.read_csv(uploaded_file)
     st.success("Test dataset loaded successfully.")
-    
-    if 'target' not in test_data.columns:
-        st.error("Corrupt file. Missing target format")
-    else:
-        try:
-            # Load models & transformer
-            models_dict, system_preprocessor = load_system_artifacts()
-        except Exception as err:
-            st.error(f"Failed to load model files: {err}")
-            st.stop()
-                    
-        X_eval = test_data.drop(columns=['target'])
-        y_eval = test_data['target']
 
-        # Drop unnecessary columns
-        for cols_to_drop in ['id', 'num']:
-            if cols_to_drop in X_eval.columns:
-                X_eval = X_eval.drop(columns=[cols_to_drop])
-
-        # Selection dropdown
-        st.sidebar.header("Target Classifier Models")
-        selected_model = st.sidebar.selectbox("Choose model for validation evaluation:", list(models_dict.keys()))
-        
-        active_clf = models_dict[selected_model]
-
-        # Load the transformer
-        try:
-            X_eval_transformed = system_preprocessor.transform(X_eval)
-        except Exception as trans_err:
-            st.error(f"Data alignment error for the preprocessor: {trans_err}")
-            st.stop()
-        
-        # Predict classes and output
-        predictions = active_clf.predict(X_eval_transformed)
-        probabilities = active_clf.predict_proba(X_eval_transformed)[:, 1] if hasattr(active_clf, "predict_proba") else predictions
-        
-        # Render metrics
-        render_dashboard_metrics(y_eval, predictions, probabilities, selected_model)
-        
-        st.subheader("Display Classifiction report")
-        st.text(classification_report(y_eval, predictions, zero_division=0))
+if 'target' not in test_data.columns:
+    st.error("Corrupt file. Missing target format")
 else:
-    st.info("Test file 'test_data.csv' files not found")
+    try:
+        # Load models & transformer
+        models_dict, system_preprocessor = load_system_artifacts()
+    except Exception as err:
+        st.error(f"Failed to load model files: {err}")
+        st.stop()
+                
+    X_eval = test_data.drop(columns=['target'])
+    y_eval = test_data['target']
+
+    # Drop unnecessary columns
+    for cols_to_drop in ['id', 'num']:
+        if cols_to_drop in X_eval.columns:
+            X_eval = X_eval.drop(columns=[cols_to_drop])
+
+    # Selection dropdown
+    st.sidebar.header("Target Classifier Models")
+    selected_model = st.sidebar.selectbox("Choose model for validation evaluation:", list(models_dict.keys()))
+    
+    active_clf = models_dict[selected_model]
+
+    # Load the transformer
+    try:
+        X_eval_transformed = system_preprocessor.transform(X_eval)
+    except Exception as trans_err:
+        st.error(f"Data alignment error for the preprocessor: {trans_err}")
+        st.stop()
+    
+    # Predict classes and output
+    predictions = active_clf.predict(X_eval_transformed)
+    probabilities = active_clf.predict_proba(X_eval_transformed)[:, 1] if hasattr(active_clf, "predict_proba") else predictions
+    
+    # Render metrics
+    render_dashboard_metrics(y_eval, predictions, probabilities, selected_model)
+    
+    st.subheader("Display Classifiction report")
+    st.text(classification_report(y_eval, predictions, zero_division=0))
+
     
